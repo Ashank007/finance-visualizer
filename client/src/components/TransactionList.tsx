@@ -6,7 +6,11 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function TransactionList({ onDelete }) {
+type TransactionListProps = {
+  onDelete: () => void;
+};
+
+export default function TransactionList({ onDelete }: TransactionListProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

@@ -5,12 +5,13 @@ import TransactionList from "./components/TransactionList";
 import MonthlyChart from "./components/MonthlyChart";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExclamationCircleIcon, ChartBarIcon, ListBulletIcon } from '@heroicons/react/24/outline'; // New icons
+import { ExclamationCircleIcon} from '@heroicons/react/24/outline'; // New icons
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+type LoadingSpinnerProps = {
+  message: string;
+};
 
 function App() {
-  const [transactions, setTransactions] = useState([]); // This state is not directly used for rendering but for prop drilling
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0); // Key to force re-render/re-fetch of child components
@@ -138,7 +139,7 @@ function App() {
       </motion.footer>
 
       {/* Global Styles (better placed in a global CSS file or postcss, but for this example, inline) */}
-      <style jsx>{`
+      <style>{`
         /* Custom subtle grid pattern */
         .bg-grid-pattern {
           background-size: 40px 40px;
@@ -171,7 +172,7 @@ function App() {
 }
 
 // Reusable Loading Spinner Component
-const LoadingSpinner = ({ message }) => (
+const LoadingSpinner = ({ message } : LoadingSpinnerProps) => (
   <div className="flex flex-col items-center justify-center h-full text-blue-600">
     <svg className="animate-spin h-10 w-10 text-blue-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

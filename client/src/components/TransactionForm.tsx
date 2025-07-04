@@ -3,9 +3,12 @@ import { useState } from "react";
 import { PlusCircleIcon, CalendarIcon, CurrencyRupeeIcon, DocumentTextIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from "framer-motion";
 
+type TransactionFormProps = {
+  onAdd: () => void;
+};
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function TransactionForm({ onAdd }) {
+export default function TransactionForm({ onAdd } : TransactionFormProps) {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
@@ -13,7 +16,7 @@ export default function TransactionForm({ onAdd }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setShowSuccess(false); // Reset success message on new submission

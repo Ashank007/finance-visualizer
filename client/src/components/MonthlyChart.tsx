@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import type { Transaction } from "../types/Transaction";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChartBarIcon, ExclamationCircleIcon, InformationCircleIcon } from '@heroicons/react/24/outline'; // Importing icons
+import { ChartBarIcon, ExclamationCircleIcon} from '@heroicons/react/24/outline'; // Importing icons
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
