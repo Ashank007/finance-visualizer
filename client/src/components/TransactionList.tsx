@@ -10,6 +10,26 @@ type TransactionListProps = {
   onDelete: () => void;
 };
 
+function getCategoryColor(category: string | undefined) {
+  switch ((category || "").toLowerCase()) {
+    case "food":
+      return "bg-pink-100 text-pink-800";
+    case "transport":
+      return "bg-yellow-100 text-yellow-800";
+    case "shopping":
+      return "bg-purple-100 text-purple-800";
+    case "bills":
+      return "bg-red-100 text-red-800";
+    case "health":
+      return "bg-green-100 text-green-800";
+    case "other":
+      return "bg-gray-100 text-gray-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+}
+
+
 export default function TransactionList({ onDelete }: TransactionListProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -155,9 +175,14 @@ export default function TransactionList({ onDelete }: TransactionListProps) {
                       day: "numeric",
                     })}
                   </span>
+                  <span
+                    className={`inline-block px-3 py-0.5 text-xs font-semibold rounded-full
+                                ${getCategoryColor(t.category)}`}
+                  >
+                    {t.category || "Other"}
+                  </span>
                 </div>
-
-                <div className="flex items-center space-x-4 ml-4">
+                  <div className="flex items-center space-x-4 ml-4">
                   <span className="text-blue-600 font-bold text-lg whitespace-nowrap">
                     ₹{t.amount.toFixed(2)}
                   </span>

@@ -1,25 +1,36 @@
 "use client";
 import { useState } from "react";
-import { PlusCircleIcon, CalendarIcon, CurrencyRupeeIcon, DocumentTextIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { PlusCircleIcon, CalendarIcon, CurrencyRupeeIcon, DocumentTextIcon, ListBulletIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from "framer-motion";
 
 type TransactionFormProps = {
   onAdd: () => void;
 };
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export default function TransactionForm({ onAdd } : TransactionFormProps) {
+export default function TransactionForm({ onAdd }: TransactionFormProps) {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [category, setCategory] = useState("Other");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
+  const categories = [
+    "Food",
+    "Transport",
+    "Shopping",
+    "Bills",
+    "Health",
+    "Other"
+  ];
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setShowSuccess(false); // Reset success message on new submission
+    setShowSuccess(false);
     setIsSubmitting(true);
 
     if (!amount || Number(amount) <= 0) {
@@ -27,6 +38,7 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
       setIsSubmitting(false);
       return;
     }
+
     if (!date) {
       setError("Please select a valid date.");
       setIsSubmitting(false);
@@ -36,7 +48,7 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/transactions`, {
         method: "POST",
-        body: JSON.stringify({ amount: +amount, description, date }),
+        body: JSON.stringify({ amount: +amount, description, date, category }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -44,12 +56,13 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      onAdd(); // Trigger parent's data refresh
+      onAdd();
       setAmount("");
       setDescription("");
       setDate(new Date().toISOString().slice(0, 10));
-      setShowSuccess(true); // Show success message
-      setTimeout(() => setShowSuccess(false), 3000); // Hide after 3 seconds
+      setCategory("Other");
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
 
     } catch (err) {
       console.error("Error adding transaction:", err);
@@ -65,15 +78,14 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       onSubmit={handleSubmit}
-      className="max-w-lg mx-auto p-6 md:p-8 bg-white rounded-xl shadow-lg border border-gray-200
-                 font-sans text-gray-800 relative overflow-hidden"
+      className="max-w-lg mx-auto p-6 md:p-8 bg-white rounded-xl shadow-lg border border-gray-200 font-sans text-gray-800 relative overflow-hidden"
     >
       <h2 className="text-3xl font-bold text-center text-gray-900 mb-8 pb-4 border-b border-gray-200">
         Record New Transaction
       </h2>
 
       <div className="space-y-6 mb-8">
-        {/* Amount Field */}
+        {/* Amount */}
         <div className="relative">
           <label htmlFor="amount" className="sr-only">Amount</label>
           <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200">
@@ -85,8 +97,7 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
               min="0"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="block w-full p-3 text-lg text-gray-900 bg-transparent outline-none
-                         placeholder-gray-400"
+              className="block w-full p-3 text-lg text-gray-900 bg-transparent outline-none placeholder-gray-400"
               placeholder="0.00"
               required
               aria-label="Transaction Amount"
@@ -95,7 +106,7 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
           </div>
         </div>
 
-        {/* Date Field */}
+        {/* Date */}
         <div className="relative">
           <label htmlFor="date" className="sr-only">Date</label>
           <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200">
@@ -106,15 +117,14 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
               value={date}
               onChange={(e) => setDate(e.target.value)}
               max={new Date().toISOString().slice(0, 10)}
-              className="block w-full p-3 text-lg text-gray-900 bg-transparent outline-none
-                         appearance-none"
+              className="block w-full p-3 text-lg text-gray-900 bg-transparent outline-none appearance-none"
               required
               aria-label="Transaction Date"
             />
           </div>
         </div>
 
-        {/* Description Field */}
+        {/* Description */}
         <div className="relative">
           <label htmlFor="description" className="sr-only">Description</label>
           <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200">
@@ -126,8 +136,35 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g., Groceries, Rent, Salary"
               className="block w-full p-3 text-lg text-gray-900 bg-transparent outline-none"
-              aria-label="Transaction Description (optional)"
+              aria-label="Transaction Description"
             />
+          </div>
+        </div>
+
+        {/* Category */}
+        <div className="relative">
+          <label htmlFor="category" className="sr-only">Category</label>
+          <div className="flex items-center border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200">
+            <ListBulletIcon className="h-6 w-6 text-gray-500 ml-4 mr-2" />
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="block w-full p-3 text-lg text-gray-900 bg-transparent outline-none"
+              required
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat === "Food" && "🍽️ "}
+                  {cat === "Transport" && "🚗 "}
+                  {cat === "Shopping" && "🛍️ "}
+                  {cat === "Bills" && "📄 "}
+                  {cat === "Health" && "💊 "}
+                  {cat === "Other" && "📦 "}
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
@@ -176,10 +213,7 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
         whileTap={{ scale: 0.98 }}
         whileHover={{ scale: 1.02 }}
         disabled={isSubmitting}
-        className="w-full relative flex items-center justify-center bg-blue-600 text-white font-semibold
-                   py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300
-                   focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-75
-                   disabled:opacity-60 disabled:cursor-not-allowed text-lg"
+        className="w-full relative flex items-center justify-center bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-75 disabled:opacity-60 disabled:cursor-not-allowed text-lg"
       >
         {isSubmitting ? (
           <div className="flex items-center">
@@ -199,4 +233,5 @@ export default function TransactionForm({ onAdd } : TransactionFormProps) {
     </motion.form>
   );
 }
+
 

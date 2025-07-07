@@ -12,11 +12,11 @@ const getall_transaction = async(req,res) => {
 
 const create_transaction = async (req,res) => {
   try {
-    const { amount, date, description } = req.body;
+    const { amount, date, description, category } = req.body;
     if (!amount || !date) {
       return res.status(400).json({ error: "Amount and date are required" });
     }
-    const newTransaction = new Transaction({ amount, date: new Date(date), description });
+    const newTransaction = new Transaction({ amount, date: new Date(date), description:description,category:category});
     const savedTransaction = await newTransaction.save();
     res.status(201).json(savedTransaction);
   } catch (error) {

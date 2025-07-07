@@ -6,34 +6,38 @@ import MonthlyChart from "./components/MonthlyChart";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExclamationCircleIcon} from '@heroicons/react/24/outline'; // New icons
+import type{ Transaction } from "./types/Transaction";
 
 type LoadingSpinnerProps = {
   message: string;
 };
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0); // Key to force re-render/re-fetch of child components
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate a quick app-level load
-      setRefreshKey(prev => prev + 1); // Increment key to trigger children re-fetch
-    } catch (err: any) {
-      setError(err.message || "Failed to initialize application data.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const fetchData = async () => {
+  setIsLoading(true);
+  setError(null);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/transactions`);
+    const data = await res.json();
+    setTransactions(data);
+  } catch (err: any) {
+    setError(err.message || "Failed to load transactions.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Handler to be passed to TransactionForm and TransactionList to trigger data refresh
   const handleDataChange = () => {
     setRefreshKey(prev => prev + 1); // Increment key to trigger re-fetch in list and chart
   };
@@ -107,7 +111,7 @@ function App() {
             {isLoading ? (
               <LoadingSpinner message="Loading transactions..." />
             ) : (
-              <TransactionList onDelete={handleDataChange} key={`list-${refreshKey}`} />
+              <TransactionList transactions={transactions} onDelete={handleDataChange} key={`list-${refreshKey}`} />
             )}
           </motion.section>
 
