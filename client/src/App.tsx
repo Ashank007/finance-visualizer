@@ -4,6 +4,7 @@ import TransactionForm from "./components/TransactionForm";
 import TransactionList from "./components/TransactionList";
 import MonthlyChart from "./components/MonthlyChart";
 import CategoryPieChart from "./components/CategoryPieChart";
+import DashboardSummary from "./components/DashboardSummary";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
@@ -26,6 +27,7 @@ function App() {
     setError(null);
     try {
       const res = await fetch(`${API_BASE_URL}/api/transactions`);
+      if (!res.ok) throw new Error(`Error: ${res.status} ${res.statusText}`);
       const data = await res.json();
       setTransactions(data);
     } catch (err: any) {
@@ -40,11 +42,12 @@ function App() {
   }, []);
 
   const handleDataChange = () => {
-    fetchData(); // Refetch data on transaction add/delete
+    fetchData(); // Refetch data on add/delete
+    setRefreshKey(prev => prev + 1);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 sm:p-10 font-sans text-gray-800">
+    <div className="min-h-screen bg-gray-50 p-6 sm:p-10 font-sans text-gray-800 relative">
       {/* Background */}
       <div className="absolute inset-0 bg-white bg-grid-pattern opacity-5 -z-10"></div>
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 opacity-80 -z-20"></div>
@@ -80,12 +83,27 @@ function App() {
               <button
                 onClick={() => setError(null)}
                 className="ml-auto text-red-700 hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-full p-1"
+                aria-label="Close alert"
               >
                 &times;
               </button>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Dashboard Summary */}
+        <motion.section
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.7, ease: "easeOut" }}
+          className="bg-white rounded-2xl p-6 md:p-8 shadow-xl border border-gray-100"
+        >
+          {isLoading ? (
+            <LoadingSpinner message="Loading dashboard summary..." />
+          ) : (
+            <DashboardSummary transactions={transactions} />
+          )}
+        </motion.section>
 
         {/* Form */}
         <motion.section
@@ -185,12 +203,20 @@ function App() {
   );
 }
 
-// Reusable Spinner
 const LoadingSpinner = ({ message }: LoadingSpinnerProps) => (
   <div className="flex flex-col items-center justify-center h-full text-blue-600">
-    <svg className="animate-spin h-10 w-10 text-blue-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <svg
+      className="animate-spin h-10 w-10 text-blue-500 mb-3"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+      />
     </svg>
     <p className="text-lg text-gray-600">{message}</p>
   </div>
