@@ -1,28 +1,21 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
-
-import DashboardSummaryPage from "./pages/DashboardSummaryPage";
-import TransactionListPage from "./pages/TransactionListPage";
-import AddTransactionPage from "./pages/AddTransactionPage";
-import MonthlyChartPage from "./pages/MonthlyChartPage";
-import CategoryChartPage from "./pages/CategoryChartPage";
+import DashboardContainer from "./components/dashboard/DashboardContainer";
+import TransactionsPage from "./components/transaction/TransactionPage";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <div className="pt-4">
+      {/* Main content with top padding for fixed navbar */}
+      <div className="pt-16 bg-[#0d1117] min-h-screen">
         <Routes>
-          <Route path="/" element={<DashboardSummaryPage />} />
-          <Route path="/transactions" element={<TransactionListPage />} />
-          <Route path="/add-transaction" element={<AddTransactionPage />} />
-          <Route path="/monthly-chart" element={<MonthlyChartPage />} />
-          <Route path="/category-chart" element={<CategoryChartPage />} />
+          <Route path="/" element={<DashboardContainer />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
+          {/* <Route path="/add-transaction" element={<AddTransactionPage />} /> */}
         </Routes>
       </div>
     </BrowserRouter>
   );
 }
-
-
