@@ -2,7 +2,7 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { createTransactionApi } from "../../hooks/useTransactionCrud";
+import { createTransactionApi } from "../../hooks/useTransactionCRUD";
 import type { Transaction } from "../../types/Transaction";
 
 export default function ExpandableAddForm({

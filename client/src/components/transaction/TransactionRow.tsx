@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import type { Transaction } from "../../types/Transaction";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { deleteTransactionApi } from "../../hooks/useTransactionCrud";
+import { deleteTransactionApi } from "../../hooks/useTransactionCRUD";
 import { useState } from "react";
 
 function getCategoryColor(category?: string) {
