@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  mongodb:
+    image: mongo:6
+    container_name: mongodb
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - finance-network
+
+
   backend:
     build:
       context: ./api
@@ -10,7 +21,8 @@ services:
     env_file:
     - ./api/.env
     networks:
-      - app-network
+      - finance-network
+
 
   frontend:
     build:
@@ -23,9 +35,12 @@ services:
     depends_on:
       - backend
     networks:
-      - app-network
+      - finance-network
+
+volumes:
+  mongo-data:
 
 networks:
-  app-network:
+  finance-network:
     driver: bridge
 
