@@ -1,3 +1,9 @@
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](https://www.docker.com/)  
+[![Node.js](https://img.shields.io/badge/Node.js-18.x-green?logo=node.js)](https://nodejs.org/)  
+[![MongoDB](https://img.shields.io/badge/MongoDB-Database-success?logo=mongodb)](https://www.mongodb.com/)  
+[![React](https://img.shields.io/badge/React-18-blue?logo=react)](https://react.dev/)  
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](./LICENSE)  
+
 # 💸 Finance Visualizer
 
 A modern personal expense tracker built with React + TypeScript (frontend) and Express + MongoDB (backend).
